@@ -1,1 +1,53 @@
-<navbar></navbar>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center">Registra un interesse</h1>
+            <h2 class="text-center">Compila il modulo e poi premi Conferma</h2>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="col-12">
+        <form [formGroup]="formData" (ngSubmit)="submitInterest()">
+            <div class="form-group input-group-lg">
+                <label for="departure_airport_code">Codice dell'aeroporto di partenza</label>
+                <input class="form-control" type="text" placeholder="ABC" id="departure_airport_code" formControlName="departure_airport_code">
+                <div class="alert alert-danger" role="alert" *ngIf="formData.invalid">{{ departureAirportCodeError() }}</div>
+            </div>
+
+            <div class="form-group input-group-lg">
+                <label for="arrival_airport_code">Codice dell'aeroporto di arrivo</label>
+                <input class="form-control" type="text" placeholder="ABC" id="arrival_airport_code" formControlName="arrival_airport_code">
+                <div class="alert alert-danger" role="alert" *ngIf="formData.invalid">{{ arrivalAirportCodeError() }}</div>
+            </div>
+
+            <div class="form-group input-group-lg">
+                <label for="min_departure_date">Prima data plausibile per la partenza</label>
+                <input class="form-control" type="date" id="min_departure_date" formControlName="min_departure_date">
+                <div class="alert alert-danger" role="alert" *ngIf="formData.invalid">{{ minDepartureDateError() }}</div>
+            </div>
+
+            <div class="form-group input-group-lg">
+                <label for="max_comeback_date">Ultima data plausibile per il ritorno</label>
+                <input class="form-control" type="date" id="max_comeback_date" formControlName="max_comeback_date">
+                <div class="alert alert-danger" role="alert" *ngIf="formData.invalid">{{ maxComebackDateError() }}</div>
+            </div>
+
+            <div class="form-group input-group-lg">
+                <label for="max_price">Spesa massima per i viaggi</label>
+                <input class="form-control" type="text" placeholder="123,45" id="max_price" formControlName="max_price">
+                <div class="alert alert-danger" role="alert" *ngIf="formData.invalid">{{ maxPriceError() }}</div>
+            </div>
+
+            <div class="form-group input-group-lg">
+                <label for="prontogram_username">Nome utente ProntoGram</label>
+                <input class="form-control" type="text" placeholder="nomeutente" id="prontogram_username" formControlName="prontogram_username">
+                <div class="alert alert-danger" role="alert" *ngIf="formData.invalid">{{ prontogramUsernameError() }}</div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-success btn-block btn-lg">Conferma</button>
+            </div>
+        </form>
+    </div>
+</div>
