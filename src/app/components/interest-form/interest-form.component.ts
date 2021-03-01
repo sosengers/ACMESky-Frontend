@@ -45,7 +45,7 @@ export class InterestForm implements OnInit {
       prontogram_username: this.formData.value.prontogram_username
     }
 
-    this.interestService.postPayment(interest).subscribe(
+    this.interestService.registerInterest(interest).subscribe(
       (response) => {
         this.successfullyPushedInterest = true;
         console.log("[SUCCESS] The interest was successfully added to ACMESky.");
