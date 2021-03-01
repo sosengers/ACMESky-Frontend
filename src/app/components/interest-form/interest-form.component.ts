@@ -94,7 +94,7 @@ export class InterestForm implements OnInit {
     const minDepDate = new Date(this.formData.controls.min_departure_date.value);
     const maxCbDate = new Date(max_comeback_date.value);
 
-    if(minDepDate.getTime() > maxCbDate.getDate()) {
+    if(minDepDate > maxCbDate) {
       return 'La data di ritorno deve essere successiva a quella di partenza.';
     }
     
