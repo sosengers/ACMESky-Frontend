@@ -16,12 +16,12 @@ export class InterestForm implements OnInit {
 
   ngOnInit(): void {
     this.formData = this.formBuilder.group({
-      departure_airport_code: new FormControl('', [Validators.required, Validators.pattern("[A-Z]{3,3}")]),
-      arrival_airport_code: new FormControl('', [Validators.required, Validators.pattern("[A-Z]{3,3}")]),
-      min_departure_date: new FormControl('', [Validators.required]),
-      max_comeback_date: new FormControl('', [Validators.required]),
-      max_price: new FormControl('', [Validators.required, Validators.pattern("[0-9]+((.|,)[0-9]+)?")]),
-      prontogram_username: new FormControl('', [Validators.required, Validators.minLength(1)])
+      departure_airport_code: new FormControl(null, [Validators.required, Validators.pattern("[A-Z]{3,3}")]),
+      arrival_airport_code: new FormControl(null, [Validators.required, Validators.pattern("[A-Z]{3,3}")]),
+      min_departure_date: new FormControl(null, [Validators.required]),
+      max_comeback_date: new FormControl(null, [Validators.required]),
+      max_price: new FormControl(null, [Validators.required, Validators.pattern("[0-9]+((.|,)[0-9]+)?")]),
+      prontogram_username: new FormControl(null, [Validators.required, Validators.minLength(1)])
     });
   }
 
@@ -75,7 +75,7 @@ export class InterestForm implements OnInit {
       return req;
     }
 
-    if(arrival_airport_code.value == this.formData.controls.departure_airport_code.value) {
+    if(arrival_airport_code.value !== null && arrival_airport_code.value === this.formData.controls.departure_airport_code.value) {
       return 'Il codice dell\'aeroporto di arrivo deve essere diverso da quello di partenza.';
     }
 

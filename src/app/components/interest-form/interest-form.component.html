@@ -12,37 +12,37 @@
             <div class="form-group input-group-lg">
                 <label for="departure_airport_code">Codice dell'aeroporto di partenza</label>
                 <input class="form-control" type="text" placeholder="ABC" id="departure_airport_code" formControlName="departure_airport_code" />
-                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.departure_airport_code.invalid">{{ departureAirportCodeError() }}</div>
+                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.departure_airport_code.invalid && formData.controls.departure_airport_code.value !== null">{{ departureAirportCodeError() }}</div>
             </div>
 
             <div class="form-group input-group-lg">
                 <label for="arrival_airport_code">Codice dell'aeroporto di arrivo</label>
                 <input class="form-control" type="text" placeholder="ABC" id="arrival_airport_code" formControlName="arrival_airport_code" />
-                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.arrival_airport_code.invalid || arrivalAirportCodeError().length > 0">{{ arrivalAirportCodeError() }}</div>
+                <div class="alert alert-danger" role="alert" *ngIf="(formData.controls.arrival_airport_code.invalid && formData.controls.arrival_airport_code.value !== null) || (formData.controls.arrival_airport_code.value !== null && arrivalAirportCodeError().length > 0)">{{ arrivalAirportCodeError() }}</div>
             </div>
 
             <div class="form-group input-group-lg">
                 <label for="min_departure_date">Prima data plausibile per la partenza</label>
                 <input class="form-control" type="date" id="min_departure_date" formControlName="min_departure_date" />
-                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.min_departure_date.invalid">{{ minDepartureDateError() }}</div>
+                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.min_departure_date.invalid && formData.controls.min_departure_date.value !== null">{{ minDepartureDateError() }}</div>
             </div>
 
             <div class="form-group input-group-lg">
                 <label for="max_comeback_date">Ultima data plausibile per il ritorno</label>
                 <input class="form-control" type="date" id="max_comeback_date" formControlName="max_comeback_date" />
-                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.max_comeback_date.invalid || maxComebackDateError().length > 0">{{ maxComebackDateError() }}</div>
+                <div class="alert alert-danger" role="alert" *ngIf="(formData.controls.max_comeback_date.invalid && formData.controls.max_comeback_date.value !== null) || (formData.controls.max_comeback_date.value !== null && maxComebackDateError().length > 0)">{{ maxComebackDateError() }}</div>
             </div>
 
             <div class="form-group input-group-lg">
                 <label for="max_price">Spesa massima per i viaggi</label>
                 <input class="form-control" type="text" placeholder="123,45" id="max_price" formControlName="max_price" />
-                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.max_price.invalid">{{ maxPriceError() }}</div>
+                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.max_price.invalid  && formData.controls.max_price.value !== null">{{ maxPriceError() }}</div>
             </div>
 
             <div class="form-group input-group-lg">
                 <label for="prontogram_username">Nome utente ProntoGram</label>
                 <input class="form-control" type="text" placeholder="nomeutente" id="prontogram_username" formControlName="prontogram_username" />
-                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.prontogram_username.invalid">{{ prontogramUsernameError() }}</div>
+                <div class="alert alert-danger" role="alert" *ngIf="formData.controls.prontogram_username.invalid && formData.controls.prontogram_username.value !== null">{{ prontogramUsernameError() }}</div>
             </div>
 
             <div class="form-group">
