@@ -8,6 +8,7 @@
 </div>
 <div class="container">
     <div class="col-12">
+        <div class="alert" [ngClass]="{'alert-success': successfullyPushedInterest, 'alert-danger': !successfullyPushedInterest}" role="alert" *ngIf="firstRequestPerformed">{{ operationResult() }}</div>
         <form [formGroup]="formData" (ngSubmit)="submitInterest()">
             <div class="form-group input-group-lg">
                 <label for="departure_airport_code">Codice dell'aeroporto di partenza</label>

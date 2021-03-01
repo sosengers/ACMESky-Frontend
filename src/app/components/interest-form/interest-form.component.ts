@@ -11,6 +11,9 @@ import { Interest } from '../../../model/interest';
 export class InterestForm implements OnInit {
   formData!: FormGroup;
 
+  firstRequestPerformed: boolean = false;
+  successfullyPushedInterest!: boolean;
+
   constructor(private interestService: InterestService, private formBuilder: FormBuilder) {
   }
 
@@ -25,8 +28,15 @@ export class InterestForm implements OnInit {
     });
   }
 
+  operationResult(): string {
+    if(this.successfullyPushedInterest) {
+      return "L\'interesse è stato salvato con successo da ACMESky. Non appena troveremo delle offerte per te riceverai un messaggio su ProntoGram!";
+    }
+    return "L\'operazione non è andata a buon fine. Riprova.";
+  }
+
   submitInterest() {
-    let interest = <Interest> {
+    const interest = <Interest> {
       departure_airport_code: this.formData.value.departure_airport_code,
       arrival_airport_code: this.formData.value.arrival_airport_code,
       min_departure_date: this.formData.value.min_departure_date,
@@ -37,12 +47,15 @@ export class InterestForm implements OnInit {
 
     this.interestService.postPayment(interest).subscribe(
       (response) => {
-        console.log(response);
+        this.successfullyPushedInterest = true;
+        console.log("[SUCCESS] The interest was successfully added to ACMESky.");
       },
       (error) => {
-        console.log(error);
+        this.successfullyPushedInterest = false;
+        console.log("[ERROR] The interest was not added to ACMESky.");
       }
     );
+    this.firstRequestPerformed = true;
   }
 
   isValidDate(date: string): boolean {
@@ -53,6 +66,7 @@ export class InterestForm implements OnInit {
     if(control.hasError('required')) {
       return "Questo campo deve essere compilato.";
     }
+
     return '';
   }
 
