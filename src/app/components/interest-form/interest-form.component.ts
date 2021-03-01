@@ -31,7 +31,7 @@ export class InterestForm implements OnInit {
       arrival_airport_code: this.formData.value.arrival_airport_code,
       min_departure_date: this.formData.value.min_departure_date,
       max_comeback_date: this.formData.value.max_comeback_date,
-      max_price: this.formData.value.max_price,
+      max_price: parseFloat(this.formData.value.max_price.replace(",", ".")),
       prontogram_username: this.formData.value.prontogram_username
     }
 
@@ -53,68 +53,73 @@ export class InterestForm implements OnInit {
   }
 
   departureAirportCodeError(): string {
-    let departure_airport_code = this.formData.controls.departure_airport_code;
+    const departure_airport_code = this.formData.controls.departure_airport_code;
 
-    let req = this.missingRequired(departure_airport_code);
+    const req = this.missingRequired(departure_airport_code);
     if(req !== '') {
       return req;
     }
 
-    return departure_airport_code.hasError('departure_airport_code') ? 'Il codice dell\'aeroporto inserito non è corretto.' : '';
+    return departure_airport_code.hasError('pattern') ? 'Il codice dell\'aeroporto inserito non è corretto.' : '';
   }
 
   arrivalAirportCodeError(): string {
-    let arrival_airport_code = this.formData.controls.arrival_airport_code;
+    const arrival_airport_code = this.formData.controls.arrival_airport_code;
 
-    let req = this.missingRequired(arrival_airport_code);
+    const req = this.missingRequired(arrival_airport_code);
     if(req !== '') {
       return req;
     }
 
-    return arrival_airport_code.hasError('arrival_airport_code') ? 'Il codice dell\'aeroporto inserito non è corretto.' : '';
+    if(arrival_airport_code.value == this.formData.controls.departure_airport_code.value) {
+      return 'Il codice dell\'aeroporto di arrivo deve essere diverso da quello di partenza.';
+    }
+
+    return arrival_airport_code.hasError('pattern') ? 'Il codice dell\'aeroporto inserito non è corretto.' : '';
   }
 
   minDepartureDateError(): string {
-    let min_departure_date = this.formData.controls.min_departure_date;
+    const min_departure_date = this.formData.controls.min_departure_date;
 
-    let req = this.missingRequired(min_departure_date);
-    if(req !== '') {
-      return req;
-    }
-
-    return min_departure_date.hasError('min_departure_date') ? 'La minima data di partenza inserita non è corretta.' : '';
+    const req = this.missingRequired(min_departure_date);
+    
+    return req;
   }
 
   maxComebackDateError(): string {
-    let max_comeback_date = this.formData.controls.max_comeback_date;
+    const max_comeback_date = this.formData.controls.max_comeback_date;
 
-    let req = this.missingRequired(max_comeback_date);
-    if(req !== '') {
-      return req;
+    const req = this.missingRequired(max_comeback_date);
+
+    const minDepDate = new Date(this.formData.controls.min_departure_date.value);
+    const maxCbDate = new Date(max_comeback_date.value);
+
+    if(minDepDate.getTime() > maxCbDate.getDate()) {
+      return 'La data di ritorno deve essere successiva a quella di partenza.';
     }
-
-    return max_comeback_date.hasError('max_comeback_date') ? 'La massima data di ritorno inserita non è corretta.' : '';
+    
+    return req;
   }
 
   maxPriceError(): string {
-    let max_price = this.formData.controls.max_price;
+    const max_price = this.formData.controls.max_price;
 
-    let req = this.missingRequired(max_price);
+    const req = this.missingRequired(max_price);
     if(req !== '') {
       return req;
     }
 
-    return max_price.hasError('max_price') ? 'Il prezzo inserito non è corretto.' : '';
+    return max_price.hasError('pattern') ? 'Il prezzo inserito non è corretto.' : '';
   }
 
   prontogramUsernameError(): string {
-    let prontogram_username = this.formData.controls.prontogram_username;
+    const prontogram_username = this.formData.controls.prontogram_username;
 
-    let req = this.missingRequired(prontogram_username);
+    const req = this.missingRequired(prontogram_username);
     if(req !== '') {
       return req;
     }
 
-    return prontogram_username.hasError('prontogram_username') ? 'Il nome utente inserito non è nel formato corretto.' : '';
+    return prontogram_username.hasError('minLength') ? 'Il nome utente inserito non è nel formato corretto.' : '';
   }
 }
