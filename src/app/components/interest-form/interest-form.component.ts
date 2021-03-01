@@ -45,6 +45,10 @@ export class InterestForm implements OnInit {
     );
   }
 
+  isValidDate(date: string): boolean {
+    return !isNaN((new Date(date)).getTime());
+  }
+
   missingRequired(control: AbstractControl): string {
     if(control.hasError('required')) {
       return "Questo campo deve essere compilato.";
@@ -82,6 +86,10 @@ export class InterestForm implements OnInit {
     const min_departure_date = this.formData.controls.min_departure_date;
 
     const req = this.missingRequired(min_departure_date);
+
+    if(!this.isValidDate(min_departure_date.value)) {
+      return 'La data inserita non è valida. Se il tuo browser non supporta l\'inserimento mediante widget, usa il formato mm/gg/aaaa';
+    }
     
     return req;
   }
@@ -90,6 +98,10 @@ export class InterestForm implements OnInit {
     const max_comeback_date = this.formData.controls.max_comeback_date;
 
     const req = this.missingRequired(max_comeback_date);
+
+    if(!this.isValidDate(max_comeback_date.value)) {
+      return 'La data inserita non è valida. Se il tuo browser non supporta l\'inserimento mediante widget, usa il formato mm/gg/aaaa';
+    }
 
     const minDepDate = new Date(this.formData.controls.min_departure_date.value);
     const maxCbDate = new Date(max_comeback_date.value);
