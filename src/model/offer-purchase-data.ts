@@ -1,6 +1,6 @@
 import { Address } from "./address";
 
-export interface OffertPurchaseData {
+export interface OfferPurchaseData {
     offer_code: string;
     address: Address;
     name: string;

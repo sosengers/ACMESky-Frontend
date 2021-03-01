@@ -1,0 +1,97 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center">Acquista un'offerta</h1>
+            <h2 class="text-center">Devi prima aver ricevuto un codice offerta su ProntoGram</h2>
+        </div>
+    </div>
+</div>
+<div class="alert" [ngClass]="{'alert-success': successfullyPushedOfferData, 'alert-danger': !successfullyPushedOfferData}" role="alert" *ngIf="firstRequestPerformed">{{ operationResult() }}</div>
+<form [formGroup]="formData" (ngSubmit)="submitOfferData()">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3>Offerta</h3>
+                <div class="form-group input-group-lg">
+                    <label for="offer_code">Codice dell'offerta (ricevuto tramite ProntoGram)</label>
+                    <input class="form-control" type="text" placeholder="XYZ1234" id="offer_code" formControlName="offer_code" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.offer_code.invalid && formData.controls.offer_code.value !== null">{{ offerCodeError() }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h3>Dati personali</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                <div class="form-group input-group-lg">
+                    <label for="name">Nome</label>
+                    <input class="form-control" type="text" placeholder="Nome" id="name" formControlName="name" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.name.invalid && formData.controls.name.value !== null">{{ nameError() }}</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                <div class="form-group input-group-lg">
+                    <label for="surname">Cognome</label>
+                    <input class="form-control" type="text" placeholder="Cognome" id="surname" formControlName="surname" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.surname.invalid && formData.controls.surname.value !== null">{{ surnameError() }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h3>Indirizzo</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+                <div class="form-group input-group-lg">
+                    <label for="street">Via/Strada/Piazza</label>
+                    <input class="form-control" type="text" placeholder="Via/Strada/Piazza" id="street" formControlName="street" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.street.invalid && formData.controls.street.value !== null">{{ streetError() }}</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                <div class="form-group input-group-lg">
+                    <label for="number">Numero</label>
+                    <input class="form-control" type="text" placeholder="Numero" id="number" formControlName="number" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.number.invalid && formData.controls.number.value !== null">{{ numberError() }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                <div class="form-group input-group-lg">
+                    <label for="city">Città</label>
+                    <input class="form-control" type="text" placeholder="Città" id="city" formControlName="city" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.city.invalid && formData.controls.city.value !== null">{{ cityError() }}</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                <div class="form-group input-group-lg">
+                    <label for="zip_code">CAP</label>
+                    <input class="form-control" type="number" placeholder="CAP" id="zip_code" formControlName="zip_code" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.zip_code.invalid && formData.controls.zip_code.value !== null">{{ zipCodeError() }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group input-group-lg">
+                    <label for="country">Stato</label>
+                    <input class="form-control" type="text" placeholder="Stato" id="country" formControlName="country" />
+                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.country.invalid && formData.controls.country.value !== null">{{ countryError() }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <button class="btn btn-success btn-block btn-lg" [disabled]="formData.invalid">Conferma</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
