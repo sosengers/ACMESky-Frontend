@@ -16,7 +16,7 @@ import { HomeRoute } from './routes/home/home.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 const socketIoConfig: SocketIoConfig = {
-  url: 'http://0.0.0.0:8000/',
+  url: 'http://0.0.0.0:9001/',
   options: {}
 }
 
