@@ -13,6 +13,13 @@ import { RegisterInterestRoute } from './routes/register-interest/register-inter
 import { BuyOfferForm } from './components/buy-offer-form/buy-offer-form.component';
 import { HomeRoute } from './routes/home/home.component';
 
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+const socketIoConfig: SocketIoConfig = {
+  url: 'http://0.0.0.0:8000/',
+  options: {}
+}
+
 @NgModule({
   declarations: [
     AppRoot,
@@ -28,7 +35,8 @@ import { HomeRoute } from './routes/home/home.component';
     AppRoutingModule,
     NgbModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SocketIoModule.forRoot(socketIoConfig)
   ],
   providers: [],
   bootstrap: [AppRoot]

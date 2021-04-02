@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Socket } from 'ngx-socket-io';
 import { OffersService } from 'src/api/offers.service';
 import { Address } from 'src/model/address';
 import { OfferPurchaseData } from 'src/model/offer-purchase-data';
@@ -9,15 +10,21 @@ import { OfferPurchaseData } from 'src/model/offer-purchase-data';
   templateUrl: './buy-offer-form.component.html',
   styleUrls: ['./buy-offer-form.component.css']
 })
+@Injectable()
 export class BuyOfferForm implements OnInit {
   formData!: FormGroup;
 
   firstRequestPerformed: boolean = false;
   successfullyPushedOfferData!: boolean;
   payOfferUrl: string = "";
+  webSocketMessage: string = "";
+  webSocketError: boolean = false;
   
-  constructor(private offersService: OffersService, private formBuilder: FormBuilder) {
-  }
+  constructor(
+    private offersService: OffersService,
+    private formBuilder: FormBuilder,
+    private socket: Socket
+  ) {}
 
   ngOnInit(): void {
     this.formData = this.formBuilder.group({
@@ -34,9 +41,14 @@ export class BuyOfferForm implements OnInit {
 
   operationResult(): string {
     if(this.successfullyPushedOfferData) {
-      let message = "Il codice offerta inserito è corretto.";
-      message += "Clicca <a href=\"" + this.payOfferUrl + "\">qui</a> per andare alla pagina del pagamento."
-      return message;
+      this.socket.emit('join', this.payOfferUrl);
+      this.socket.on('json', (purchase_process_information: string) => {
+        const ppi = JSON.parse(purchase_process_information);
+        this.webSocketMessage = ppi.message;
+        this.webSocketError = ppi.is_error;
+      });
+      // vvv First published message vvv
+      return "Il codice offerta è stato inserimento correttamente.";
     }
     return "L\'operazione non è andata a buon fine. Riprova.";
   }

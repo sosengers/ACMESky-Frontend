@@ -6,7 +6,17 @@
         </div>
     </div>
 </div>
-<div class="alert" [ngClass]="{'alert-success': successfullyPushedOfferData, 'alert-danger': !successfullyPushedOfferData}" role="alert" *ngIf="firstRequestPerformed">{{ operationResult() }}</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert" [ngClass]="{'alert-secondary': successfullyPushedOfferData, 'alert-danger': !successfullyPushedOfferData}" role="alert" *ngIf="firstRequestPerformed">{{ operationResult() }}</div>
+            <div class="alert" [ngClass]="{'alert-success': webSocketError, 'alert-danger': !webSocketError}" role="alert" *ngIf="firstRequestPerformed && successfullyPushedOfferData">
+                <span *ngIf="webSocketMessage.length == 0">Attendi...</span>
+                <span *ngIf="webSocketMessage.length > 0">{{ webSocketMessage }}</span>
+            </div>
+        </div>
+    </div>
+</div>
 <form [formGroup]="formData" (ngSubmit)="submitOfferData()">
     <div class="container">
         <div class="row">
