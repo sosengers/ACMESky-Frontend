@@ -46,8 +46,13 @@ export class BuyOfferForm implements OnInit {
         this.socket.emit('join', this.payOfferUrl);
         this.socket.on('json', (purchase_process_information: string) => {
           const ppi = JSON.parse(purchase_process_information);
-          this.webSocketMessage = ppi.message;
           this.webSocketError = ppi.is_error;
+          if(!ppi.message.startsWith("http://")) {
+            this.webSocketMessage = ppi.message;
+          } else {
+            this.webSocketMessage = "Verrà aperto il sito del provider di pagamenti...";
+            window.open(ppi.message);
+          }
         });
         
         this.joinedQueue = true;
