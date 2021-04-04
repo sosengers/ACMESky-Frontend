@@ -51,6 +51,7 @@ export class BuyOfferForm implements OnInit {
             this.webSocketMessage = ppi.message;
           } else {
             this.webSocketMessage = "Verrà aperto il sito del provider di pagamenti...";
+            console.log(`Payment URL: ${ppi.message}`);
             window.open(ppi.message);
           }
         });
