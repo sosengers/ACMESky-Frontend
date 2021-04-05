@@ -17,7 +17,7 @@ export class BuyOfferForm implements OnInit {
   firstRequestPerformed: boolean = false;
   successfullyPushedOfferData!: boolean;
   joinedQueue!: boolean;
-  payOfferUrl: string = "";
+  communicationCode: string = "";
   webSocketMessage: string = "";
   webSocketError: boolean = false;
   
@@ -43,7 +43,7 @@ export class BuyOfferForm implements OnInit {
   operationResult(): string {
     if(this.successfullyPushedOfferData) {
       if (!this.joinedQueue) {
-        this.socket.emit('join', this.payOfferUrl);
+        this.socket.emit('join', this.communicationCode);
         this.socket.on('json', (purchase_process_information: string) => {
           const ppi = JSON.parse(purchase_process_information);
           this.webSocketError = ppi.is_error;
@@ -80,11 +80,11 @@ export class BuyOfferForm implements OnInit {
 
     this.offersService.buyOffer(offerPurchaseData).subscribe(
       (response) => {
-        this.payOfferUrl = (response.body?.pay_offer_url !== null && response.body?.pay_offer_url !== undefined) ? response.body.pay_offer_url : "";
+        this.communicationCode = (response.body?.communication_code !== null && response.body?.communication_code !== undefined) ? response.body.communication_code : "";
         console.log("BODY:" + response.body);
         this.successfullyPushedOfferData = true;
         this.joinedQueue = false;
-        console.log("[SUCCESS] The offer purchase data was successfully inserted into ACMESky. The user is given the Payment Provider URL: " + this.payOfferUrl + ".");
+        console.log("[SUCCESS] The offer purchase data was successfully inserted into ACMESky. The user is given the Payment Provider URL: " + this.communicationCode + ".");
       },
       (error) => {
         this.successfullyPushedOfferData = false;
