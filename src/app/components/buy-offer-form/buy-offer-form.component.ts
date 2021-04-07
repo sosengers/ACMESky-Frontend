@@ -4,6 +4,7 @@ import { Socket } from 'ngx-socket-io';
 import { OffersService } from 'src/api/offers.service';
 import { Address } from 'src/model/address';
 import { OfferPurchaseData } from 'src/model/offer-purchase-data';
+import { Tickets } from 'src/model/tickets';
 
 @Component({
   selector: 'buy-offer-form',
@@ -47,13 +48,21 @@ export class BuyOfferForm implements OnInit {
         this.socket.on('json', (purchase_process_information: string) => {
           const ppi = JSON.parse(purchase_process_information);
           this.webSocketError = ppi.is_error;
-          if(!ppi.message.startsWith("http://")) {
-            this.webSocketMessage = ppi.message;
-          } else {
-            this.webSocketMessage = "Verrà aperto il sito del provider di pagamenti...";
-            console.log(`Payment URL: ${ppi.message}`);
-            window.open(ppi.message);
+          if (ppi.flights !== undefined ) {
+            //ppi contains the tickets
+            console.log(ppi);
           }
+          else {
+            if(!ppi.message.startsWith("http://")) {
+              //ppi contains a message
+              this.webSocketMessage = ppi.message;
+            } else {
+              //ppi contains a URL
+              this.webSocketMessage = "Verrà aperto il sito del provider di pagamenti...";
+              console.log(`Payment URL: ${ppi.message}`);
+              window.open(ppi.message);
+          }
+        }
         });
         
         this.joinedQueue = true;
