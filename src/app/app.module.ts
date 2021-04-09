@@ -14,9 +14,10 @@ import { BuyOfferForm } from './components/buy-offer-form/buy-offer-form.compone
 import { HomeRoute } from './routes/home/home.component';
 
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { environment } from 'src/environments/environment';
 
 const socketIoConfig: SocketIoConfig = {
-  url: 'http://0.0.0.0:9001/',
+  url: environment.acmeskyMiddleware,
   options: {}
 }
 
