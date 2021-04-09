@@ -9,15 +9,26 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <div class="alert" [ngClass]="{'alert-secondary': successfullyPushedOfferData, 'alert-danger': !successfullyPushedOfferData}" role="alert" *ngIf="firstRequestPerformed">{{ operationResult() }}</div>
-            <div class="alert" [ngClass]="{'alert-success': webSocketError, 'alert-danger': !webSocketError}" role="alert" *ngIf="firstRequestPerformed && successfullyPushedOfferData">
+            <lib-stepperProgressBar id="myStepper" [controller]="progressStepper"
+                                    [steps]="steps"></lib-stepperProgressBar>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="alert"
+                 [ngClass]="{'alert-secondary': successfullyPushedOfferData, 'alert-danger': !successfullyPushedOfferData}"
+                 role="alert" *ngIf="firstRequestPerformed">{{ operationResult() }}</div>
+            <div class="alert" [ngClass]="{'alert-success': !webSocketError, 'alert-danger': webSocketError}"
+                 role="alert" *ngIf="firstRequestPerformed && successfullyPushedOfferData">
                 <span *ngIf="webSocketMessage.length == 0">Attendi...</span>
                 <span *ngIf="webSocketMessage.length > 0">{{ webSocketMessage }}</span>
             </div>
         </div>
     </div>
 </div>
-<form [formGroup]="formData" (ngSubmit)="submitOfferData()">
+
+<form [formGroup]="formData" (ngSubmit)="submitOfferData()" *ngIf="status === TransactionStatus.NothingDone">
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -105,3 +116,49 @@
         </div>
     </div>
 </form>
+
+<div class="container" *ngIf="status === TransactionStatus.WaitingOfferCodeValidity">
+    <div class="row d-flex justify-content-center">
+        <lottie-player class="d-flex justify-content-center" src="https://assets5.lottiefiles.com/packages/lf20_r9vYy5.json"  background="transparent"  speed="1"  style="width: 40em; height: 40em;"  loop autoplay></lottie-player>
+    </div>
+</div>
+
+<div class="container" *ngIf="status === TransactionStatus.WaitingPayment">
+    <a href="{{paymentUrl}}" target="_blank" type="button" class="btn btn-primary btn-lg btn-block">Procedi al pagamento</a>
+    <div class="row d-flex justify-content-center">
+        <lottie-player class="d-flex justify-content-center" src="https://assets6.lottiefiles.com/packages/lf20_eHhh6e.json"  background="transparent"  speed="1"  style="width: 40em; height: 40em;"  loop autoplay></lottie-player>
+    </div>
+</div>
+
+<div class="container" *ngIf="status === TransactionStatus.TicketsArrived">
+    <div class="row">
+        <div class="col-sm">
+            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_tCIUzD.json"  background="transparent"  speed="1"  style="width: 40em; height: 40em;"  loop autoplay></lottie-player>
+        </div>
+        <div class="col-sm">
+            <h1>Andata</h1>
+            <div><span class="h4">Areoporto di partenza:</span> {{tickets.flights.outbound.departureAirportCode}}</div>
+            <div><span class="h4">Areoporto di arrivo:</span> {{tickets.flights.outbound.arrivalAirportCode}}</div>
+            <div><span class="h4">Orario di partenza:</span> {{tickets.flights.outbound.departureDatetime}}</div>
+            <div><span class="h4">Orario di arrivo:</span> {{tickets.flights.outbound.arrivalDatetime}}</div>
+            <div><span class="h4">Prezzo:</span> {{tickets.flights.outbound.cost}}</div>
+
+            <h1>Ritorno</h1>
+            <div><span class="h4">Areoporto di partenza:</span> {{tickets.flights.comeback.departureAirportCode}}</div>
+            <div><span class="h4">Areoporto di arrivo:</span> {{tickets.flights.comeback.arrivalAirportCode}}</div>
+            <div><span class="h4">Orario di partenza:</span> {{tickets.flights.comeback.departureDatetime}}</div>
+            <div><span class="h4">Orario di arrivo:</span> {{tickets.flights.comeback.arrivalDatetime}}</div>
+            <div><span class="h4">Prezzo:</span> {{tickets.flights.comeback.cost}}</div>
+
+            <h1>Servizio navetta</h1>
+            <span *ngIf="!tickets.transfers">Servizio navetta non prenotato</span>
+            <span *ngIf="tickets.transfers">{{tickets.transfers}}</span>
+        </div>
+    </div>
+</div>
+
+<div class="container" *ngIf="status === TransactionStatus.SomethingWentWrong">
+    <div class="row d-flex justify-content-center">
+        <lottie-player src="https://assets4.lottiefiles.com/private_files/lf30_glnkkfua.json"  background="transparent"  speed="1"  style="width: 40em; height: 40em;"  loop  autoplay></lottie-player>
+    </div>
+</div>

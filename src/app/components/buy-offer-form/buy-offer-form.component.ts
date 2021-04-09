@@ -1,161 +1,193 @@
-import { Component, Injectable, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Socket } from 'ngx-socket-io';
-import { OffersService } from 'src/api/offers.service';
-import { Address } from 'src/model/address';
-import { OfferPurchaseData } from 'src/model/offer-purchase-data';
-import { Tickets } from 'src/model/tickets';
+import {Component, Injectable, OnInit} from '@angular/core';
+import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Socket} from 'ngx-socket-io';
+import {OffersService} from 'src/api/offers.service';
+import {Address} from 'src/model/address';
+import {OfferPurchaseData} from 'src/model/offer-purchase-data';
+import {Step, StepperProgressBarController} from 'stepper-progress-bar';
+
+export enum TransactionStatus {
+    NothingDone,
+    WaitingOfferCodeValidity,
+    WaitingPayment,
+    TicketsArrived,
+    SomethingWentWrong
+}
 
 @Component({
-  selector: 'buy-offer-form',
-  templateUrl: './buy-offer-form.component.html',
-  styleUrls: ['./buy-offer-form.component.css']
+    selector: 'buy-offer-form',
+    templateUrl: './buy-offer-form.component.html',
+    styleUrls: ['./buy-offer-form.component.css'],
 })
 @Injectable()
 export class BuyOfferForm implements OnInit {
-  formData!: FormGroup;
+    formData!: FormGroup;
 
-  firstRequestPerformed: boolean = false;
-  successfullyPushedOfferData!: boolean;
-  joinedQueue!: boolean;
-  communicationCode: string = "";
-  webSocketMessage: string = "";
-  webSocketError: boolean = false;
-  
-  constructor(
-    private offersService: OffersService,
-    private formBuilder: FormBuilder,
-    private socket: Socket
-  ) {}
+    firstRequestPerformed = false;
+    successfullyPushedOfferData!: boolean;
+    joinedQueue!: boolean;
+    communicationCode = '';
+    webSocketMessage = '';
+    webSocketError = false;
 
-  ngOnInit(): void {
-    this.formData = this.formBuilder.group({
-      city: new FormControl(null, [Validators.required]),
-      country: new FormControl(null, [Validators.required]),
-      number: new FormControl(null, [Validators.required]),
-      street: new FormControl(null, [Validators.required]),
-      zip_code: new FormControl(null, [Validators.required]),
-      name: new FormControl(null, [Validators.required]),
-      surname: new FormControl(null, [Validators.required]),
-      offer_code: new FormControl(null, [Validators.required]),
-    });
-  }
+    steps: Step[] = new Array<Step>(new Step('Validazione codice offerta'), new Step('Pagamento effettuato'), new Step('Ricezione bliglietti'));
+    progressStepper: StepperProgressBarController = new StepperProgressBarController();
 
-  operationResult(): string {
-    if(this.successfullyPushedOfferData) {
-      if (!this.joinedQueue) {
-        this.socket.emit('join', this.communicationCode);
-        this.socket.on('json', (purchase_process_information: string) => {
-          const ppi = JSON.parse(purchase_process_information);
-          this.webSocketError = ppi.is_error;
-          if (ppi.flights !== undefined ) {
-            //ppi contains the tickets
-            console.log(ppi);
-          }
-          else {
-            if(!ppi.message.startsWith("http://")) {
-              //ppi contains a message
-              this.webSocketMessage = ppi.message;
-            } else {
-              //ppi contains a URL
-              this.webSocketMessage = "Verrà aperto il sito del provider di pagamenti...";
-              console.log(`Payment URL: ${ppi.message}`);
-              window.open(ppi.message);
-          }
-        }
+    paymentUrl = '';
+
+    TransactionStatus = TransactionStatus;
+    status: TransactionStatus = TransactionStatus.NothingDone;
+
+    // tslint:disable-next-line:ban-types
+    tickets: any = null;
+
+    s = 0;
+
+    constructor(
+        private offersService: OffersService,
+        private formBuilder: FormBuilder,
+        private socket: Socket
+    ) {
+    }
+
+    ngOnInit(): void {
+        this.formData = this.formBuilder.group({
+            city: new FormControl(null, [Validators.required]),
+            country: new FormControl(null, [Validators.required]),
+            number: new FormControl(null, [Validators.required]),
+            street: new FormControl(null, [Validators.required]),
+            zip_code: new FormControl(null, [Validators.required]),
+            name: new FormControl(null, [Validators.required]),
+            surname: new FormControl(null, [Validators.required]),
+            offer_code: new FormControl(null, [Validators.required]),
         });
-        
-        this.joinedQueue = true;
-      }
-      // vvv First published message vvv
-      return "Il codice offerta è stato inserimento correttamente.";
-    }
-    return "L\'operazione non è andata a buon fine. Riprova.";
-  }
-
-  submitOfferData() {
-    const offerPurchaseData = <OfferPurchaseData> {
-      address: <Address> {
-        city: this.formData.value.city,
-        country: this.formData.value.country,
-        number: this.formData.value.number,
-        street: this.formData.value.street,
-        zip_code: this.formData.value.zip_code
-      },
-      name: this.formData.value.name,
-      surname: this.formData.value.surname,
-      offer_code: this.formData.value.offer_code
     }
 
-    this.offersService.buyOffer(offerPurchaseData).subscribe(
-      (response) => {
-        this.communicationCode = (response.body?.communication_code !== null && response.body?.communication_code !== undefined) ? response.body.communication_code : "";
-        console.log("BODY:" + response.body);
-        this.successfullyPushedOfferData = true;
-        this.joinedQueue = false;
-        console.log("[SUCCESS] The offer purchase data was successfully inserted into ACMESky. The user is given the Payment Provider URL: " + this.communicationCode + ".");
-      },
-      (error) => {
-        this.successfullyPushedOfferData = false;
-        console.log("[ERROR] The offer purchase data was not correct.");
-      }
-    );
-    this.firstRequestPerformed = true;
-  }
+    operationResult(): string {
+        if (this.successfullyPushedOfferData) {
+            if (!this.joinedQueue) {
+                this.socket.emit('join', this.communicationCode);
+                this.socket.on('json', (purchase_process_information: string) => {
+                    const ppi = JSON.parse(purchase_process_information);
+                    this.webSocketError = ppi.is_error;
+                    if (ppi.flights !== undefined) {
+                        // ppi contains the tickets
+                        this.status = TransactionStatus.TicketsArrived;
+                        this.progressStepper.nextStep();
+                        this.tickets = ppi;
+                        this.webSocketMessage = 'I bliglietti sono stati acquistati correttamente. Ecco un riepilogo del viaggio.';
+                        this.progressStepper.nextStep();
+                    } else {
+                        if (!ppi.message.startsWith('http://')) {
+                            // ppi contains a message
+                            this.progressStepper.nextStep();
+                            this.webSocketMessage = ppi.message;
+                        } else {
+                            // ppi contains a URL
+                            this.progressStepper.nextStep();
+                            this.webSocketMessage = 'Codice offerta valido, cliccare il pulsante per procedere con il pagamento.';
+                            console.log(`Payment URL: ${ppi.message}`);
+                            this.paymentUrl = ppi.message;
+                            // window.open(ppi.message);
+                        }
+                    }
+                });
 
-  missingRequired(control: AbstractControl): string {
-    if(control.hasError('required')) {
-      return "Questo campo deve essere compilato.";
+                this.joinedQueue = true;
+            }
+            // vvv First published message vvv
+            return 'Il codice offerta è stato inserimento correttamente.';
+        }
+        this.status = TransactionStatus.SomethingWentWrong;
+        return 'L\'operazione non è andata a buon fine. Riprova.';
     }
 
-    return '';
-  }
+    submitOfferData() {
+        const offerPurchaseData = {
+            address: {
+                city: this.formData.value.city,
+                country: this.formData.value.country,
+                number: this.formData.value.number,
+                street: this.formData.value.street,
+                zip_code: this.formData.value.zip_code
+            } as Address,
+            name: this.formData.value.name,
+            surname: this.formData.value.surname,
+            offer_code: this.formData.value.offer_code
+        } as OfferPurchaseData;
 
-  offerCodeError(): string {
-    const offer_code = this.formData.controls.offer_code;
+        this.status = TransactionStatus.WaitingOfferCodeValidity;
 
-    return this.missingRequired(offer_code);
-  }
+        this.offersService.buyOffer(offerPurchaseData).subscribe(
+            (response) => {
+                this.communicationCode = (response.body?.communication_code !== null && response.body?.communication_code !== undefined) ? response.body.communication_code : '';
+                console.log('BODY:' + response.body);
+                this.successfullyPushedOfferData = true;
+                this.joinedQueue = false;
+                this.status = TransactionStatus.WaitingPayment;
+                console.log('[SUCCESS] The offer purchase data was successfully inserted into ACMESky. The user is given the Payment Provider URL: ' + this.communicationCode + '.');
+            },
+            (error) => {
+                this.successfullyPushedOfferData = false;
+                console.log('[ERROR] The offer purchase data was not correct.');
+            }
+        );
+        this.firstRequestPerformed = true;
+    }
 
-  nameError(): string {
-    const name = this.formData.controls.name;
+    missingRequired(control: AbstractControl): string {
+        if (control.hasError('required')) {
+            return 'Questo campo deve essere compilato.';
+        }
 
-    return this.missingRequired(name);
-  }
+        return '';
+    }
 
-  surnameError(): string {
-    const surname = this.formData.controls.surname;
+    offerCodeError(): string {
+        const offer_code = this.formData.controls.offer_code;
 
-    return this.missingRequired(surname);
-  }
+        return this.missingRequired(offer_code);
+    }
 
-  streetError(): string {
-    const street = this.formData.controls.street;
+    nameError(): string {
+        const name = this.formData.controls.name;
 
-    return this.missingRequired(street);
-  }
+        return this.missingRequired(name);
+    }
 
-  numberError(): string {
-    const number = this.formData.controls.number;
+    surnameError(): string {
+        const surname = this.formData.controls.surname;
 
-    return this.missingRequired(number);
-  }
+        return this.missingRequired(surname);
+    }
 
-  cityError(): string {
-    const city = this.formData.controls.city;
+    streetError(): string {
+        const street = this.formData.controls.street;
 
-    return this.missingRequired(city);
-  }
+        return this.missingRequired(street);
+    }
 
-  zipCodeError(): string {
-    const zip_code = this.formData.controls.zip_code;
+    numberError(): string {
+        const number = this.formData.controls.number;
 
-    return this.missingRequired(zip_code);
-  }
+        return this.missingRequired(number);
+    }
 
-  countryError(): string {
-    const country = this.formData.controls.country;
+    cityError(): string {
+        const city = this.formData.controls.city;
 
-    return this.missingRequired(country);
-  }
+        return this.missingRequired(city);
+    }
+
+    zipCodeError(): string {
+        const zip_code = this.formData.controls.zip_code;
+
+        return this.missingRequired(zip_code);
+    }
+
+    countryError(): string {
+        const country = this.formData.controls.country;
+
+        return this.missingRequired(country);
+    }
 }

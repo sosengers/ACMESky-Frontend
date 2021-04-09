@@ -2,3 +2,15 @@ div.alert.alert-danger,
 div.alert.alert-succes {
     margin-top: 0.5em;
 }
+
+::ng-deep .progress {
+    margin-top: 1em!important;
+}
+
+::ng-deep .progress-step{
+    margin-bottom: 1em;
+}
+
+::ng-deep .is-complete::before {
+    line-height: 1em!important;
+}
