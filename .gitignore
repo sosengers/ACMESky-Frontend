@@ -1,6 +1,7 @@
 
 # Created by https://www.toptal.com/developers/gitignore/api/angular
 # Edit at https://www.toptal.com/developers/gitignore?templates=angular
+src/environments/environment.ts
 
 ### Angular ###
 ## Angular ##

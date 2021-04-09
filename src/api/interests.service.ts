@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Interest } from '../model/interest';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InterestService {
   
-  acmeskyBackendURL: string = "http://0.0.0.0:9000"
+  acmeskyBackendURL: string = environment.acmeskyBackend;
 
   constructor(private http: HttpClient) {}
 

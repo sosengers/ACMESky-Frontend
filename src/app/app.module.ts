@@ -16,12 +16,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
 import {StepperProgressBarModule} from 'stepper-progress-bar';
-
+import { environment } from '../environments/environment';
 
 const socketIoConfig: SocketIoConfig = {
-    url: 'http://0.0.0.0:9001/',
-    options: {}
+  url: environment.acmeskyMiddleware,
+  options: {}
 };
+
 
 @NgModule({
     declarations: [
