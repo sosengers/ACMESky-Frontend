@@ -41,8 +41,6 @@ export class BuyOfferForm implements OnInit {
     // tslint:disable-next-line:ban-types
     tickets: any = null;
 
-    s = 0;
-
     constructor(
         private offersService: OffersService,
         private formBuilder: FormBuilder,
@@ -133,6 +131,10 @@ export class BuyOfferForm implements OnInit {
             }
         );
         this.firstRequestPerformed = true;
+    }
+
+    dateToLocale(date: string): string {
+        return (new Date(date)).toLocaleString();
     }
 
     missingRequired(control: AbstractControl): string {
