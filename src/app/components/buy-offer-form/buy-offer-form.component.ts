@@ -54,10 +54,10 @@ export class BuyOfferForm implements OnInit {
             country: new FormControl(null, [Validators.required]),
             number: new FormControl(null, [Validators.required]),
             street: new FormControl(null, [Validators.required]),
-            zip_code: new FormControl(null, [Validators.required]),
+            zip_code: new FormControl(null, [Validators.required, Validators.pattern('^[0-9]+$')]),
             name: new FormControl(null, [Validators.required]),
             surname: new FormControl(null, [Validators.required]),
-            offer_code: new FormControl(null, [Validators.required]),
+            offer_code: new FormControl(null, [Validators.required, Validators.minLength(11), Validators.maxLength(11)]),
         });
     }
 
@@ -149,7 +149,12 @@ export class BuyOfferForm implements OnInit {
     offerCodeError(): string {
         const offer_code = this.formData.controls.offer_code;
 
-        return this.missingRequired(offer_code);
+        const req = this.missingRequired(offer_code);
+        if(req !== '') {
+          return req;
+        }
+    
+        return (offer_code.hasError('minLength') || offer_code.hasError('maxLength')) ? 'Il codice dell\'offerta è composto di 11 caratteri alfanumerici.' : '';
     }
 
     nameError(): string {
@@ -185,7 +190,12 @@ export class BuyOfferForm implements OnInit {
     zipCodeError(): string {
         const zip_code = this.formData.controls.zip_code;
 
-        return this.missingRequired(zip_code);
+        const req = this.missingRequired(zip_code);
+        if(req !== '') {
+          return req;
+        }
+    
+        return zip_code.hasError('pattern') ? 'Il CAP deve essere formato di soli caratteri numerici.' : '';
     }
 
     countryError(): string {
