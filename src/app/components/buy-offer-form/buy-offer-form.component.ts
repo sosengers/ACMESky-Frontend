@@ -67,6 +67,7 @@ export class BuyOfferForm implements OnInit {
                 this.socket.emit('join', this.communicationCode);
                 this.socket.on('json', (purchase_process_information: string) => {
                     const ppi = JSON.parse(purchase_process_information);
+                    console.log(ppi);
                     this.webSocketError = ppi.is_error;
                     if (ppi.flights !== undefined) {
                         // ppi contains the tickets
@@ -84,6 +85,7 @@ export class BuyOfferForm implements OnInit {
                             // ppi contains a URL
                             this.progressStepper.nextStep();
                             this.webSocketMessage = 'Codice offerta valido, cliccare il pulsante per procedere con il pagamento.';
+                            this.status = TransactionStatus.WaitingPayment;
                             console.log(`Payment URL: ${ppi.message}`);
                             this.paymentUrl = ppi.message;
                             // window.open(ppi.message);
@@ -122,7 +124,6 @@ export class BuyOfferForm implements OnInit {
                 console.log('BODY:' + response.body);
                 this.successfullyPushedOfferData = true;
                 this.joinedQueue = false;
-                this.status = TransactionStatus.WaitingPayment;
                 console.log('[SUCCESS] The offer purchase data was successfully inserted into ACMESky. The user is given the Payment Provider URL: ' + this.communicationCode + '.');
             },
             (error) => {
