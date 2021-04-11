@@ -35,7 +35,7 @@
                 <h3>Offerta</h3>
                 <div class="form-group input-group-lg">
                     <label for="offer_code">Codice dell'offerta (ricevuto tramite ProntoGram)</label>
-                    <input class="form-control" type="text" placeholder="XYZ1234" id="offer_code" formControlName="offer_code" />
+                    <input class="form-control" type="text" placeholder="x1Y2z3A4b5C" id="offer_code" formControlName="offer_code" />
                     <div class="alert alert-danger" role="alert" *ngIf="formData.controls.offer_code.invalid && formData.controls.offer_code.value !== null">{{ offerCodeError() }}</div>
                 </div>
             </div>
