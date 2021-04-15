@@ -5,6 +5,7 @@ import {OffersService} from 'src/api/offers.service';
 import {Address} from 'src/model/address';
 import {OfferPurchaseData} from 'src/model/offer-purchase-data';
 import {Step, StepperProgressBarController} from 'stepper-progress-bar';
+import {CountryPickerComponent, CountryPickerService, ICountry} from 'ngx-country-picker';
 
 export enum TransactionStatus {
     NothingDone,
@@ -21,6 +22,19 @@ export enum TransactionStatus {
 })
 @Injectable()
 export class BuyOfferForm implements OnInit {
+
+    selectedCar: number | undefined;
+
+    cars = [
+        { id: 1, name: 'Volvo' },
+        { id: 2, name: 'Saab' },
+        { id: 3, name: 'Opel' },
+        { id: 4, name: 'Audi' },
+    ];
+
+    countries: ICountry[] = [];
+    countryName!: any;
+
     formData!: FormGroup;
 
     firstRequestPerformed = false;
@@ -44,20 +58,32 @@ export class BuyOfferForm implements OnInit {
     constructor(
         private offersService: OffersService,
         private formBuilder: FormBuilder,
-        private socket: Socket
-    ) {
-    }
+        private socket: Socket,
+        protected countryPicker: CountryPickerService
+    ) {}
 
     ngOnInit(): void {
         this.formData = this.formBuilder.group({
             city: new FormControl(null, [Validators.required]),
-            country: new FormControl(null, [Validators.required]),
             number: new FormControl(null, [Validators.required]),
             street: new FormControl(null, [Validators.required]),
             zip_code: new FormControl(null, [Validators.required, Validators.pattern('^[0-9]+$')]),
             name: new FormControl(null, [Validators.required]),
             surname: new FormControl(null, [Validators.required]),
-            offer_code: new FormControl(null, [Validators.required, Validators.minLength(11), Validators.maxLength(11)]),
+            offer_code: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(10)]),
+        });
+
+        this.countryPicker.getCountries().subscribe((countries) => {
+            this.countries = countries.sort((c1, c2) => {
+                if (c1.translations.ita.common > c2.translations.ita.common) {
+                    return 1;
+                } else {
+                    if (c1.translations.ita.common < c2.translations.ita.common) {
+                        return -1;
+                    }
+                }
+                return 0;
+            });
         });
     }
 
@@ -103,10 +129,14 @@ export class BuyOfferForm implements OnInit {
     }
 
     submitOfferData() {
+        console.log(this.countryName);
+        console.log(this.selectedCar);
+        return;
+
         const offerPurchaseData = {
             address: {
                 city: this.formData.value.city,
-                country: this.formData.value.country,
+                country: this.countryName as unknown as string,
                 number: this.formData.value.number,
                 street: this.formData.value.street,
                 zip_code: this.formData.value.zip_code
@@ -115,6 +145,8 @@ export class BuyOfferForm implements OnInit {
             surname: this.formData.value.surname,
             offer_code: this.formData.value.offer_code
         } as OfferPurchaseData;
+        console.log(this.countryName);
+        console.log(this.countryName as unknown as string);
 
         this.status = TransactionStatus.WaitingOfferCodeValidity;
 
@@ -148,13 +180,12 @@ export class BuyOfferForm implements OnInit {
 
     offerCodeError(): string {
         const offer_code = this.formData.controls.offer_code;
-
         const req = this.missingRequired(offer_code);
-        if(req !== '') {
+        if (req !== '') {
           return req;
         }
-    
-        return (offer_code.hasError('minLength') || offer_code.hasError('maxLength')) ? 'Il codice dell\'offerta è composto di 11 caratteri alfanumerici.' : '';
+
+        return (offer_code.hasError('minlength') || offer_code.hasError('maxlength')) ? 'Il codice dell\'offerta è composto di 10 caratteri alfanumerici.' : '';
     }
 
     nameError(): string {
@@ -191,16 +222,10 @@ export class BuyOfferForm implements OnInit {
         const zip_code = this.formData.controls.zip_code;
 
         const req = this.missingRequired(zip_code);
-        if(req !== '') {
+        if (req !== '') {
           return req;
         }
-    
+
         return zip_code.hasError('pattern') ? 'Il CAP deve essere formato di soli caratteri numerici.' : '';
-    }
-
-    countryError(): string {
-        const country = this.formData.controls.country;
-
-        return this.missingRequired(country);
     }
 }

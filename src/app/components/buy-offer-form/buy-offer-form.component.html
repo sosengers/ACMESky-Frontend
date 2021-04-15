@@ -35,7 +35,7 @@
                 <h3>Offerta</h3>
                 <div class="form-group input-group-lg">
                     <label for="offer_code">Codice dell'offerta (ricevuto tramite ProntoGram)</label>
-                    <input class="form-control" type="text" placeholder="x1Y2z3A4b5C" id="offer_code" formControlName="offer_code" />
+                    <input class="form-control" type="text" placeholder="x1Y2z3A4b5" id="offer_code" formControlName="offer_code" />
                     <div class="alert alert-danger" role="alert" *ngIf="formData.controls.offer_code.invalid && formData.controls.offer_code.value !== null">{{ offerCodeError() }}</div>
                 </div>
             </div>
@@ -102,8 +102,16 @@
             <div class="col-12">
                 <div class="form-group input-group-lg">
                     <label for="country">Stato</label>
-                    <input class="form-control" type="text" placeholder="Stato" id="country" formControlName="country" />
-                    <div class="alert alert-danger" role="alert" *ngIf="formData.controls.country.invalid && formData.controls.country.value !== null">{{ countryError() }}</div>
+                    <ng-select [items]="countries"
+                               bindLabel="translations.ita.common"
+                               bindValue="name.common"
+                               [(ngModel)]="countryName">
+                    </ng-select>
+                    <ng-select [items]="cars"
+                               bindLabel="name"
+                               bindValue="id"
+                               [(ngModel)]="selectedCar">
+                    </ng-select>
                 </div>
             </div>
         </div>

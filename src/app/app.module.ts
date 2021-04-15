@@ -1,6 +1,6 @@
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -17,6 +17,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {SocketIoModule, SocketIoConfig} from 'ngx-socket-io';
 import {StepperProgressBarModule} from 'stepper-progress-bar';
 import { environment } from '../environments/environment';
+import { CountryPickerModule } from 'ngx-country-picker';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 const socketIoConfig: SocketIoConfig = {
   url: environment.acmeskyMiddleware,
@@ -42,7 +44,10 @@ const socketIoConfig: SocketIoConfig = {
         ReactiveFormsModule,
         SocketIoModule.forRoot(socketIoConfig),
         StepperProgressBarModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        CountryPickerModule.forRoot(),
+        NgSelectModule,
+        FormsModule,
     ],
     providers: [],
     bootstrap: [AppRoot],
