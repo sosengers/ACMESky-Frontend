@@ -19,10 +19,14 @@ import {StepperProgressBarModule} from 'stepper-progress-bar';
 import { environment } from '../environments/environment';
 import { CountryPickerModule } from 'ngx-country-picker';
 import { NgSelectModule } from '@ng-select/ng-select';
+import {CommonModule} from '@angular/common';
 
 const socketIoConfig: SocketIoConfig = {
   url: environment.acmeskyMiddleware,
-  options: {}
+  options: {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 10,
+  }
 };
 
 
@@ -38,16 +42,17 @@ const socketIoConfig: SocketIoConfig = {
     ],
     imports: [
         BrowserModule,
+        CommonModule,
         AppRoutingModule,
         NgbModule,
         HttpClientModule,
+        FormsModule,
         ReactiveFormsModule,
         SocketIoModule.forRoot(socketIoConfig),
         StepperProgressBarModule,
         BrowserAnimationsModule,
         CountryPickerModule.forRoot(),
         NgSelectModule,
-        FormsModule,
     ],
     providers: [],
     bootstrap: [AppRoot],

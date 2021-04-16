@@ -101,17 +101,17 @@
         <div class="row">
             <div class="col-12">
                 <div class="form-group input-group-lg">
-                    <label for="country">Stato</label>
-                    <ng-select [items]="countries"
-                               bindLabel="translations.ita.common"
+                    <label >Stato</label>
+                    <ng-select
+                               [items]="countries"
+                               [(ngModel)]="selectedCountry"
+                               name="country"
                                bindValue="name.common"
-                               [(ngModel)]="countryName">
+                               bindLabel="translations.ita.common"
+                               placeholder="Seleziona una nazione"
+                               required>
                     </ng-select>
-                    <ng-select [items]="cars"
-                               bindLabel="name"
-                               bindValue="id"
-                               [(ngModel)]="selectedCar">
-                    </ng-select>
+
                 </div>
             </div>
         </div>
