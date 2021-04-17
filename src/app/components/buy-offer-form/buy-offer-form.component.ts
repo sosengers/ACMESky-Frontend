@@ -95,14 +95,22 @@ export class BuyOfferForm implements OnInit {
                 // tslint:disable-next-line:variable-name
                 this.socket.on('json', (purchase_process_information: string) => {
                     const ppi = JSON.parse(purchase_process_information);
-                    console.log(ppi);
+                    if (ppi.communication_code !== this.communicationCode) {
+                        return;
+                    }
                     this.webSocketError = ppi.is_error;
+
+                    if (this.webSocketError) {
+                        this.status = TransactionStatus.SomethingWentWrong;
+                        return;
+                    }
+
                     if (ppi.flights !== undefined) {
                         // ppi contains the tickets
                         this.status = TransactionStatus.TicketsArrived;
                         this.progressStepper.nextStep();
                         this.tickets = ppi;
-                        this.webSocketMessage = 'I bliglietti sono stati acquistati correttamente. Ecco un riepilogo del viaggio.';
+                        this.webSocketMessage = 'I biglietti sono stati acquistati correttamente. Ecco un riepilogo del viaggio.';
                         this.progressStepper.nextStep();
                     } else {
                         if (!ppi.message.startsWith('http://')) {
@@ -116,7 +124,6 @@ export class BuyOfferForm implements OnInit {
                             this.status = TransactionStatus.WaitingPayment;
                             console.log(`Payment URL: ${ppi.message}`);
                             this.paymentUrl = ppi.message;
-                            // window.open(ppi.message);
                         }
                     }
                 });
@@ -126,13 +133,11 @@ export class BuyOfferForm implements OnInit {
             // vvv First published message vvv
             return 'Il codice offerta è stato inserimento correttamente.';
         }
-        this.status = TransactionStatus.SomethingWentWrong;
         return 'L\'operazione non è andata a buon fine. Riprova.';
     }
 
 
     submitOfferData(): void {
-        console.log(this.selectedCountry);
         const offerPurchaseData = {
             address: {
                 city: this.formData.value.city,

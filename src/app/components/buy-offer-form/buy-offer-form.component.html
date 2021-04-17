@@ -149,18 +149,18 @@
             <div><span class="h4">Areoporto di arrivo:</span> {{tickets.flights.outbound.arrivalAirportCode}}</div>
             <div><span class="h4">Orario di partenza:</span> {{dateToLocale(tickets.flights.outbound.departureDatetime)}}</div>
             <div><span class="h4">Orario di arrivo:</span> {{dateToLocale(tickets.flights.outbound.arrivalDatetime)}}</div>
-            <div><span class="h4">Prezzo:</span> {{tickets.flights.outbound.cost}}</div>
+            <div><span class="h4">Prezzo:</span> {{tickets.flights.outbound.cost}}€</div>
 
             <h1>Ritorno</h1>
             <div><span class="h4">Areoporto di partenza:</span> {{tickets.flights.comeback.departureAirportCode}}</div>
             <div><span class="h4">Areoporto di arrivo:</span> {{tickets.flights.comeback.arrivalAirportCode}}</div>
             <div><span class="h4">Orario di partenza:</span> {{dateToLocale(tickets.flights.comeback.departureDatetime)}}</div>
             <div><span class="h4">Orario di arrivo:</span> {{dateToLocale(tickets.flights.comeback.arrivalDatetime)}}</div>
-            <div><span class="h4">Prezzo:</span> {{tickets.flights.comeback.cost}}</div>
+            <div><span class="h4">Prezzo:</span> {{tickets.flights.comeback.cost}}€</div>
 
             <h1>Servizio navetta</h1>
             <span *ngIf="!tickets.transfers">Servizio navetta non prenotato</span>
-            <span *ngIf="tickets.transfers">{{tickets.transfers}} €</span>
+            <span *ngIf="tickets.transfers">{{tickets.transfers}}</span>
         </div>
     </div>
 </div>
