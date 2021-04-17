@@ -102,6 +102,7 @@ export class BuyOfferForm implements OnInit {
 
                     if (this.webSocketError) {
                         this.status = TransactionStatus.SomethingWentWrong;
+                        this.webSocketMessage = ppi.message;
                         return;
                     }
 
