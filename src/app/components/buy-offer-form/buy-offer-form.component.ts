@@ -72,6 +72,8 @@ export class BuyOfferForm implements OnInit {
             surname: new FormControl(null, [Validators.required]),
             offer_code: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(10)]),
         });
+
+        // Retrieve the countries list, order it in alphabetic order and save it
         this.countryPicker.getCountries().subscribe((countries) => {
             this.countries = countries.sort((c1, c2) => {
                 if (c1.translations.ita.common > c2.translations.ita.common) {
@@ -89,6 +91,10 @@ export class BuyOfferForm implements OnInit {
 
 
     operationResult(): string {
+        /*
+        Method called when a new message from the WebSocket arrives.
+        It could be an error, the tickets, the URL for the Payment Provider or some message from ACMESky to show to the user.
+         */
         if (this.successfullyPushedOfferData) {
             if (!this.joinedQueue) {
                 this.socket.emit('join', this.communicationCode);
@@ -139,6 +145,7 @@ export class BuyOfferForm implements OnInit {
 
 
     submitOfferData(): void {
+        // Get the data to send to ACMESky Backend
         const offerPurchaseData = {
             address: {
                 city: this.formData.value.city,
@@ -154,6 +161,7 @@ export class BuyOfferForm implements OnInit {
 
         this.status = TransactionStatus.WaitingOfferCodeValidity;
 
+        // Use the offersService to contact ACMESky Bakcend sending the data
         this.offersService.buyOffer(offerPurchaseData).subscribe(
             (response) => {
                 // tslint:disable-next-line:max-line-length
@@ -172,9 +180,13 @@ export class BuyOfferForm implements OnInit {
     }
 
     dateToLocale(date: string): string {
+        // Convert a date to the locale format
         return (new Date(date)).toLocaleString();
     }
 
+    /*
+    Checks to perform on the form
+     */
     missingRequired(control: AbstractControl): string {
         if (control.hasError('required')) {
             return 'Questo campo deve essere compilato.';
@@ -187,7 +199,7 @@ export class BuyOfferForm implements OnInit {
         const offer_code = this.formData.controls.offer_code;
         const req = this.missingRequired(offer_code);
         if (req !== '') {
-          return req;
+            return req;
         }
 
         return (offer_code.hasError('minlength') || offer_code.hasError('maxlength')) ? 'Il codice dell\'offerta è composto di 10 caratteri alfanumerici.' : '';
@@ -218,7 +230,7 @@ export class BuyOfferForm implements OnInit {
 
         const req = this.missingRequired(zip_code);
         if (req !== '') {
-          return req;
+            return req;
         }
 
         return zip_code.hasError('pattern') ? 'Il CAP deve essere formato di soli caratteri numerici.' : '';
